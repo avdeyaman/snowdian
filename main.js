@@ -117,6 +117,11 @@ var I18N = {
     "settings.gpalette": "Цвета гирлянды",
     "settings.gspeed": "Скорость гирлянды",
     "settings.density": "Густота снега",
+    "settings.progress": "Прогресс",
+    "settings.reset": "Сбросить прогресс",
+    "settings.reset.desc": "Обнулить снежинки, капельки, зимний уровень и все апгрейды",
+    "settings.reset.confirm": "Точно сбросить?",
+    "toast.reset": "Прогресс сброшен",
 
     "mode.twinkle": "Мерцание",
     "mode.steady": "Ровный свет",
@@ -211,6 +216,11 @@ var I18N = {
     "settings.gpalette": "Garland colors",
     "settings.gspeed": "Garland speed",
     "settings.density": "Snow density",
+    "settings.progress": "Progress",
+    "settings.reset": "Reset progress",
+    "settings.reset.desc": "Set snowflakes, drops, winter level and all upgrades back to zero",
+    "settings.reset.confirm": "Really reset?",
+    "toast.reset": "Progress reset",
 
     "mode.twinkle": "Twinkle",
     "mode.steady": "Steady",
@@ -1031,6 +1041,18 @@ module.exports = (function () {
       this.updateHud(true);
       this.saveSoon();
     }
+    resetProgress() {
+      this.clearAll();
+      this.goldenUntil = 0;
+      this.settings.money = 0;
+      this.settings.drops = 0;
+      this.settings.xp = 0;
+      this.settings.ups = {};
+      this.saveNow();
+      this.updateHud(true);
+      this.toast(this.t("toast.reset"));
+    }
+
     saveSoon() {
       clearTimeout(this.saveT);
       this.saveT = setTimeout(() => this.saveNow(), 3000);
@@ -1270,6 +1292,24 @@ module.exports = (function () {
           new Setting(el).setName(plugin.t("settings.density")).addSlider(function (s) {
             s.setLimits(0.3, 2, 0.1).setValue(plugin.settings.density).setDynamicTooltip().onChange(async function (v) {
               plugin.settings.density = v; await plugin.saveData(plugin.settings);
+            });
+          });
+          el.createEl("h3", { text: plugin.t("settings.progress") });
+          new Setting(el).setName(plugin.t("settings.reset")).setDesc(plugin.t("settings.reset.desc")).addButton(function (b) {
+            b.setButtonText(plugin.t("settings.reset")).setWarning();
+            b.onClick(function () {
+              // первый клик — предупреждение, второй — сброс
+              if (!b._armed) {
+                b._armed = true;
+                b.setButtonText(plugin.t("settings.reset.confirm"));
+                plugin.later(function () {
+                  if (b._armed) { b._armed = false; b.setButtonText(plugin.t("settings.reset")); }
+                }, 4000);
+                return;
+              }
+              b._armed = false;
+              b.setButtonText(plugin.t("settings.reset"));
+              plugin.resetProgress();
             });
           });
         }
