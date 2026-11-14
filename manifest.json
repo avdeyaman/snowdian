@@ -3,7 +3,7 @@
   "name": "snowdian",
   "version": "1.0.0",
   "minAppVersion": "1.4.0",
-  "description": "Идёт снег, иней по краям экрана. Слова заметает — расчищай лопатой (курсором). Налетает метель и заметает весь файл — выкатывай снегоуборочную машину.",
-  "author": "ucheba",
+  "description": "Snow falls and drifts pile up on your words. Clear them with a shovel cursor, survive blizzards with a snowplow, collect snowflakes and drops.",
+  "author": "avdeyaman",
   "isDesktopOnly": true
 }
