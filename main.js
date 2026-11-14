@@ -15,7 +15,7 @@ try { PST = require("obsidian").PluginSettingTab; } catch (e) { PST = null; }
 var Setting = null;
 try { Setting = require("obsidian").Setting; } catch (e) { Setting = null; }
 
-var DEFAULTS = { snow: true, frost: true, ice: true, golden: true, tree: true, xp: 0, garland: true, gMode: "twinkle", gPalette: "classic", gSpeed: 1, drifts: true, blizzard: true, density: 1, hud: true, sleet: true, money: 0, drops: 0, ups: {} };
+var DEFAULTS = { lang: "auto", snow: true, frost: true, ice: true, golden: true, tree: true, xp: 0, garland: true, gMode: "twinkle", gPalette: "classic", gSpeed: 1, drifts: true, blizzard: true, density: 1, hud: true, sleet: true, money: 0, drops: 0, ups: {} };
 
 var STORM_MULT = 3;      // множитель денег за уборку метели
 var WORD_PAY = 6;        // за сугроб на слове
@@ -25,18 +25,209 @@ var PUDDLE_PAY = 1;      // капельки за лужу
 var ICE_PAY = 3;         // ❄ за кусок льда
 var GOLDEN_MS = 30000;   // длительность бонуса золотой снежинки
 var UPGRADES = [
-  { id: "shovel", icon: "🪏", name: "Широкая лопата", desc: "Сугробы на словах счищаются быстрее", base: 40, max: 8 },
-  { id: "plow", icon: "🚜", name: "Широкий отвал", desc: "Машина чистит более широкую полосу", base: 60, max: 6 },
-  { id: "value", icon: "💰", name: "Звонкий снег", desc: "+15% к ❄ за весь снег", base: 80, max: 10 },
-  { id: "weather", icon: "🌨", name: "Метеосводка", desc: "Сугробы и метели приходят чаще", base: 70, max: 6 },
-  { id: "helper", icon: "🧑‍🔧", name: "Дворник-помощник", desc: "Сам приходит и убирает сугробы и лужи (за полцены)", base: 150, max: 5 },
-  { id: "broom", cur: "drops", icon: "🧹", name: "Хорошая метёлка", desc: "Лужи убираются быстрее", base: 4, max: 8 },
-  { id: "duck", cur: "drops", icon: "🦆", name: "Резиновая уточка", desc: "В каждой луже плавает уточка", base: 10, max: 1 },
-  { id: "rainbow", cur: "drops", icon: "🌈", name: "Радуга", desc: "После снега с дождём встаёт радуга: +8 ❄ за каждую убранную лужу", base: 20, max: 1 },
-  { id: "scraper", cur: "drops", icon: "🪒", name: "Скребок", desc: "Лёд счищается быстрее", base: 6, max: 5 },
-  { id: "ornaments", cur: "drops", icon: "🎀", name: "Украшения на ёлке", desc: "Ёлка в углу наряжается шарами и звёздой", base: 8, max: 1 },
-  { id: "skin", icon: "🎨", name: "Красная машина", desc: "Новая покраска снегоуборщика", base: 250, max: 1 }
+  { id: "shovel", icon: "🪏", base: 40, max: 8 },
+  { id: "plow", icon: "🚜", base: 60, max: 6 },
+  { id: "value", icon: "💰", base: 80, max: 10 },
+  { id: "weather", icon: "🌨", base: 70, max: 6 },
+  { id: "helper", icon: "🧑‍🔧", base: 150, max: 5 },
+  { id: "broom", cur: "drops", icon: "🧹", base: 4, max: 8 },
+  { id: "duck", cur: "drops", icon: "🦆", base: 10, max: 1 },
+  { id: "rainbow", cur: "drops", icon: "🌈", base: 20, max: 1 },
+  { id: "scraper", cur: "drops", icon: "🪒", base: 6, max: 5 },
+  { id: "ornaments", cur: "drops", icon: "🎀", base: 8, max: 1 },
+  { id: "skin", icon: "🎨", base: 250, max: 1 }
 ];
+
+var I18N = {
+  ru: {
+    "plugin.name": "Зима",
+    "cmd.blizzard": "Зима: метель сейчас",
+    "cmd.drift": "Зима: замести слово",
+    "cmd.sleet": "Зима: снег с дождём",
+    "cmd.shop": "Зима: магазин",
+    "cmd.clear": "Зима: растопить всё",
+
+    "up.shovel.name": "Широкая лопата",
+    "up.shovel.desc": "Сугробы на словах счищаются быстрее",
+    "up.plow.name": "Широкий отвал",
+    "up.plow.desc": "Машина чистит более широкую полосу",
+    "up.value.name": "Звонкий снег",
+    "up.value.desc": "+15% к ❄ за весь снег",
+    "up.weather.name": "Метеосводка",
+    "up.weather.desc": "Сугробы и метели приходят чаще",
+    "up.helper.name": "Дворник-помощник",
+    "up.helper.desc": "Сам приходит и убирает сугробы и лужи (за полцены)",
+    "up.broom.name": "Хорошая метёлка",
+    "up.broom.desc": "Лужи убираются быстрее",
+    "up.duck.name": "Резиновая уточка",
+    "up.duck.desc": "В каждой луже плавает уточка",
+    "up.rainbow.name": "Радуга",
+    "up.rainbow.desc": "После снега с дождём встаёт радуга: +8 ❄ за каждую убранную лужу",
+    "up.scraper.name": "Скребок",
+    "up.scraper.desc": "Лёд счищается быстрее",
+    "up.ornaments.name": "Украшения на ёлке",
+    "up.ornaments.desc": "Ёлка в углу наряжается шарами и звёздой",
+    "up.skin.name": "Красная машина",
+    "up.skin.desc": "Новая покраска снегоуборщика",
+
+    "hud.shop": "Магазин",
+    "hud.sec": "с",
+    "shop.title": "Лавка снегоуборщика",
+    "shop.balance": "У тебя: ❄ {m}   💧 {d}",
+    "shop.level": "ур. {l}/{max}",
+    "shop.owned": "Куплено",
+    "shop.foot": "Сугроб: {w} ❄ · Лужа: {p} 💧 · Метель: ~{s} + бонус {b} ❄",
+
+    "toast.golden": "Золотая снежинка! Двойной доход 30 сек",
+    "toast.sleet": "🌧 Снег с дождём — будут сугробы и лужи",
+    "toast.level": "Зимний уровень {n}! Доход выше",
+
+    "blizzard.hint": "Метель! Файл замело — води снегоуборочной машиной",
+    "blizzard.banner": "❄ МЕТЕЛЬ ×{m}",
+    "blizzard.cleared": "Метель убрана!",
+    "blizzard.bonus": "бонус за уборку +{b}",
+
+    "settings.title": "Зима",
+    "settings.lang": "Язык интерфейса",
+    "settings.lang.desc": "Авто — как в Obsidian",
+    "settings.lang.auto": "Авто",
+    "settings.toggles": "Что показывать",
+    "settings.snow": "Снегопад",
+    "settings.snow.desc": "Лёгкий снег по всему экрану",
+    "settings.frost": "Иней по краям",
+    "settings.frost.desc": "Замёрзшая виньетка",
+    "settings.hud": "Счёт в углу",
+    "settings.hud.desc": "Показывать счёт и кнопку магазина",
+    "settings.garland": "Гирлянда",
+    "settings.garland.desc": "Мигающая гирлянда вдоль верхнего края",
+    "settings.drifts": "Сугробы на словах",
+    "settings.drifts.desc": "Слова заметает, чистить лопатой",
+    "settings.sleet": "Снег с дождём",
+    "settings.sleet.desc": "Сугробы и лужи под словами, лужи убирать метёлкой",
+    "settings.blizzard": "Метель",
+    "settings.blizzard.desc": "Время от времени заметает весь файл",
+    "settings.ice": "Лёд на словах",
+    "settings.ice.desc": "Редкие ледяные корки, их счищает скребок",
+    "settings.tree": "Ёлка в углу",
+    "settings.tree.desc": "Растёт с зимним уровнем, наряжается за 💧",
+    "settings.golden": "Золотая снежинка",
+    "settings.golden.desc": "Иногда падает золотая снежинка: клик даёт двойной доход",
+    "settings.gmode": "Режим гирлянды",
+    "settings.gmode.desc": "Как переливаются лампочки",
+    "settings.gpalette": "Цвета гирлянды",
+    "settings.gspeed": "Скорость гирлянды",
+    "settings.density": "Густота снега",
+
+    "mode.twinkle": "Мерцание",
+    "mode.steady": "Ровный свет",
+    "mode.blink": "Попеременное мигание",
+    "mode.chase": "Бегущие огни",
+    "mode.wave": "Волна",
+    "mode.breathe": "Дыхание",
+    "mode.sparkle": "Искры",
+    "pal.classic": "Разноцветная",
+    "pal.rainbow": "Радужная",
+    "pal.warm": "Тёплая белая",
+    "pal.cold": "Холодная белая",
+    "pal.xmas": "Красно-зелёная",
+    "pal.candy": "Розово-белая",
+    "pal.aurora": "Северное сияние"
+  },
+  en: {
+    "plugin.name": "Winter",
+    "cmd.blizzard": "Winter: blizzard now",
+    "cmd.drift": "Winter: bury a word",
+    "cmd.sleet": "Winter: sleet",
+    "cmd.shop": "Winter: shop",
+    "cmd.clear": "Winter: clear everything",
+
+    "up.shovel.name": "Wide shovel",
+    "up.shovel.desc": "Word drifts are cleared faster",
+    "up.plow.name": "Wide plow",
+    "up.plow.desc": "The snowplow clears a wider strip",
+    "up.value.name": "Chiming snow",
+    "up.value.desc": "+15% ❄ for all snow",
+    "up.weather.name": "Weather forecast",
+    "up.weather.desc": "Drifts and blizzards come more often",
+    "up.helper.name": "Janitor helper",
+    "up.helper.desc": "Comes by and clears drifts and puddles (half pay)",
+    "up.broom.name": "Good broom",
+    "up.broom.desc": "Puddles are cleared faster",
+    "up.duck.name": "Rubber duck",
+    "up.duck.desc": "A duck floats in every puddle",
+    "up.rainbow.name": "Rainbow",
+    "up.rainbow.desc": "After sleet a rainbow appears: +8 ❄ per cleared puddle",
+    "up.scraper.name": "Ice scraper",
+    "up.scraper.desc": "Ice is cleared faster",
+    "up.ornaments.name": "Tree ornaments",
+    "up.ornaments.desc": "The corner tree gets baubles and a star",
+    "up.skin.name": "Red plow",
+    "up.skin.desc": "A fresh paint job for the snowplow",
+
+    "hud.shop": "Shop",
+    "hud.sec": "s",
+    "shop.title": "Snowplow shop",
+    "shop.balance": "You have: ❄ {m}   💧 {d}",
+    "shop.level": "lv. {l}/{max}",
+    "shop.owned": "Owned",
+    "shop.foot": "Drift: {w} ❄ · Puddle: {p} 💧 · Blizzard: ~{s} + bonus {b} ❄",
+
+    "toast.golden": "Golden snowflake! Double income for 30 s",
+    "toast.sleet": "🌧 Sleet — expect drifts and puddles",
+    "toast.level": "Winter level {n}! Income up",
+
+    "blizzard.hint": "Blizzard! The file is snowed in — drive the snowplow",
+    "blizzard.banner": "❄ BLIZZARD ×{m}",
+    "blizzard.cleared": "Blizzard cleared!",
+    "blizzard.bonus": "cleanup bonus +{b}",
+
+    "settings.title": "Winter",
+    "settings.lang": "Interface language",
+    "settings.lang.desc": "Auto follows Obsidian",
+    "settings.lang.auto": "Auto",
+    "settings.toggles": "What to show",
+    "settings.snow": "Snowfall",
+    "settings.snow.desc": "Light snow across the screen",
+    "settings.frost": "Frost on the edges",
+    "settings.frost.desc": "A frozen vignette",
+    "settings.hud": "Score in the corner",
+    "settings.hud.desc": "Show the score and the shop button",
+    "settings.garland": "Garland",
+    "settings.garland.desc": "Twinkling lights along the top edge",
+    "settings.drifts": "Word drifts",
+    "settings.drifts.desc": "Words get snowed over, clear them with a shovel",
+    "settings.sleet": "Sleet",
+    "settings.sleet.desc": "Drifts and puddles under words, clear puddles with a broom",
+    "settings.blizzard": "Blizzard",
+    "settings.blizzard.desc": "Now and then buries the whole file",
+    "settings.ice": "Ice on words",
+    "settings.ice.desc": "Rare ice crusts, scrape them off",
+    "settings.tree": "Corner tree",
+    "settings.tree.desc": "Grows with your winter level, decorated with 💧",
+    "settings.golden": "Golden snowflake",
+    "settings.golden.desc": "A golden snowflake sometimes falls: click it for double income",
+    "settings.gmode": "Garland mode",
+    "settings.gmode.desc": "How the bulbs shimmer",
+    "settings.gpalette": "Garland colors",
+    "settings.gspeed": "Garland speed",
+    "settings.density": "Snow density",
+
+    "mode.twinkle": "Twinkle",
+    "mode.steady": "Steady",
+    "mode.blink": "Alternating blink",
+    "mode.chase": "Running lights",
+    "mode.wave": "Wave",
+    "mode.breathe": "Breathing",
+    "mode.sparkle": "Sparkles",
+    "pal.classic": "Multicolor",
+    "pal.rainbow": "Rainbow",
+    "pal.warm": "Warm white",
+    "pal.cold": "Cool white",
+    "pal.xmas": "Red & green",
+    "pal.candy": "Candy",
+    "pal.aurora": "Aurora"
+  }
+};
 
 function rnd(a, b) { return a + Math.random() * (b - a); }
 function el(tag, cls, parent) {
@@ -98,21 +289,53 @@ module.exports = (function () {
       this.settings = Object.assign({}, DEFAULTS); this.settings.ups = {};
     }
 
+    /* ---------- язык ---------- */
+    detectLang() {
+      var pref = this.settings && this.settings.lang;
+      if (pref === "ru" || pref === "en") return pref;
+      var o = "";
+      try { o = window.localStorage.getItem("language") || ""; } catch (e) {}
+      if (!o) { try { o = navigator.language || navigator.userLanguage || "en"; } catch (e) { o = "en"; } }
+      return /^ru/i.test(o) ? "ru" : "en";
+    }
+
+    t(key, vars) {
+      if (!this.langCode) this.langCode = this.detectLang();
+      var pack = I18N[this.langCode] || I18N.ru;
+      var str = pack[key];
+      if (str == null) str = I18N.ru[key];
+      if (str == null) str = key;
+      if (vars) for (var k in vars) str = str.split("{" + k + "}").join(vars[k]);
+      return str;
+    }
+
+    applyLang() {
+      this.langCode = null;
+      var self = this;
+      (this.cmdRefs || []).forEach(function (p) { try { p[0].name = self.t(p[1]); } catch (e) {} });
+      try { if (this.app.commands && this.app.commands.reloadCommands) this.app.commands.reloadCommands(); } catch (e) {}
+      if (this.hudShopBtn) this.hudShopBtn.textContent = this.t("hud.shop");
+      this.updateHud(false);
+    }
+
     async onload() {
       try {
         var saved = await this.loadData();
         if (saved) { Object.assign(this.settings, saved); this.settings.ups = Object.assign({}, saved.ups || {}); }
       } catch (e) {}
+      this.langCode = this.detectLang();
       this.build();
       this.buildHud();
       this.buildTree();
       this.scheduleHelper();
 
-      this.addCommand({ id: "blizzard-now", name: "Зима: метель сейчас", callback: () => this.startBlizzard() });
-      this.addCommand({ id: "drift-word", name: "Зима: замести слово", callback: () => this.spawnDrift() });
-      this.addCommand({ id: "sleet", name: "Зима: снег с дождём", callback: () => { if (!this.sleet && !this.blizzard) this.startSleet(); } });
-      this.addCommand({ id: "shop", name: "Зима: магазин", callback: () => this.toggleShop() });
-      this.addCommand({ id: "clear-all", name: "Зима: растопить всё", callback: () => this.clearAll() });
+      this.cmdRefs = [];
+      var reg = (id, key, cb) => this.cmdRefs.push([this.addCommand({ id: id, name: this.t(key), callback: cb }), key]);
+      reg("blizzard-now", "cmd.blizzard", () => this.startBlizzard());
+      reg("drift-word", "cmd.drift", () => this.spawnDrift());
+      reg("sleet", "cmd.sleet", () => { if (!this.sleet && !this.blizzard) this.startSleet(); });
+      reg("shop", "cmd.shop", () => this.toggleShop());
+      reg("clear-all", "cmd.clear", () => this.clearAll());
       if (PST && Setting) this.addSettingTab(this.makeTab());
 
       this.onMove = (e) => this.handleMove(e);
@@ -442,7 +665,7 @@ module.exports = (function () {
       this.golden = n;
       n.addEventListener("click", () => {
         this.goldenUntil = performance.now() + GOLDEN_MS;
-        this.toast("Золотая снежинка! Двойной доход 30 сек");
+        this.toast(this.t("toast.golden"));
         kill(n); this.golden = null;
         this.updateHud(true);
       });
@@ -605,7 +828,7 @@ module.exports = (function () {
 
     startSleet() {
       this.sleet = { end: performance.now() + 50000, next: performance.now() + 2500, cleaned: 0 };
-      this.toast("🌧 Снег с дождём — будут сугробы и лужи");
+      this.toast(this.t("toast.sleet"));
     }
 
     endSleet() {
@@ -696,11 +919,11 @@ module.exports = (function () {
       document.body.classList.remove("winter-shovel", "winter-broom", "winter-scraper");
       document.body.classList.add("winter-plowing");
       b.hint = el("div", "winter-layer winter-hint");
-      b.hint.textContent = "Метель! Файл замело — води снегоуборочной машиной";
+      b.hint.textContent = this.t("blizzard.hint");
       b.hint.style.opacity = "0";
       b.earned = 0;
       b.banner = el("div", "winter-layer winter-combo");
-      b.banner.innerHTML = '<span class="t">❄ МЕТЕЛЬ ×' + STORM_MULT + '</span><span class="v">+0</span>';
+      b.banner.innerHTML = '<span class="t">' + this.t("blizzard.banner", { m: STORM_MULT }) + '</span><span class="v">+0</span>';
       b.banner.style.display = "none";
       requestAnimationFrame(function () { cv.style.transition = "opacity 5s ease"; cv.style.opacity = "0.97"; b.hint.style.opacity = "1"; });
       // машина появляется после того как намело
@@ -804,7 +1027,7 @@ module.exports = (function () {
       var before = this.level();
       this.settings[cur || "money"] += v;
       if (!cur || cur === "money") this.settings.xp = (this.settings.xp || 0) + v;
-      if (this.level() > before) this.toast("Зимний уровень " + this.level() + "! Доход выше");
+      if (this.level() > before) this.toast(this.t("toast.level", { n: this.level() }));
       this.updateHud(true);
       this.saveSoon();
     }
@@ -845,7 +1068,7 @@ module.exports = (function () {
 
     bonusBurst(total, bonus) {
       var o = el("div", "winter-layer winter-bonus");
-      o.innerHTML = '<div class="a">Метель убрана!</div><div class="b">+' + total + ' ❄</div><div class="c">бонус за уборку +' + bonus + '</div>';
+      o.innerHTML = '<div class="a">' + this.t("blizzard.cleared") + '</div><div class="b">+' + total + ' ❄</div><div class="c">' + this.t("blizzard.bonus", { b: bonus }) + '</div>';
       setTimeout(function () { kill(o); }, 3200);
       var hr = this.hud.getBoundingClientRect();
       for (var i = 0; i < 18; i++) {
@@ -945,7 +1168,8 @@ module.exports = (function () {
       this.hudMoney = el("span", "m", this.hud);
       this.hudDrops = el("span", "m d", this.hud);
       var btn = el("button", "shopbtn", this.hud);
-      btn.textContent = "Магазин";
+      this.hudShopBtn = btn;
+      btn.textContent = this.t("hud.shop");
       btn.addEventListener("click", () => this.toggleShop());
       this.hud.style.display = this.settings.hud ? "" : "none";
       this.updateHud(false);
@@ -954,7 +1178,7 @@ module.exports = (function () {
     updateHud(flash) {
       if (this.treeGroup) this.renderTree();
       this.hudMoney.textContent = "❄ " + Math.floor(this.settings.money);
-      this.hudDrops.textContent = "💧 " + Math.floor(this.settings.drops) + "  ★" + this.level() + (this.goldenUntil > performance.now() ? "  ×2 " + Math.ceil((this.goldenUntil - performance.now()) / 1000) + "с" : "");
+      this.hudDrops.textContent = "💧 " + Math.floor(this.settings.drops) + "  ★" + this.level() + (this.goldenUntil > performance.now() ? "  ×2 " + Math.ceil((this.goldenUntil - performance.now()) / 1000) + this.t("hud.sec") : "");
       if (flash) { this.hud.classList.remove("flash"); void this.hud.offsetWidth; this.hud.classList.add("flash"); }
       if (this.shop) this.renderShop();
     }
@@ -969,21 +1193,21 @@ module.exports = (function () {
       var sh = this.shop;
       sh.textContent = "";
       var head = el("div", "head", sh);
-      var t = el("span", "", head); t.textContent = "Лавка снегоуборщика";
+      var ttl = el("span", "", head); ttl.textContent = this.t("shop.title");
       var x = el("button", "x", head); x.textContent = "×";
       x.addEventListener("click", () => this.toggleShop());
       var bal = el("div", "bal", sh);
-      bal.textContent = "У тебя: ❄ " + Math.floor(this.settings.money) + "   💧 " + Math.floor(this.settings.drops);
+      bal.textContent = this.t("shop.balance", { m: Math.floor(this.settings.money), d: Math.floor(this.settings.drops) });
       UPGRADES.forEach((u) => {
         var cur = u.cur || "money", sym = cur === "drops" ? "💧" : "❄";
         var lvl = this.up(u.id), maxed = lvl >= u.max, cost = this.price(u);
         var row = el("div", "row", sh);
         var ic = el("div", "ic", row); ic.textContent = u.icon;
         var tx = el("div", "tx", row);
-        var n = el("div", "n", tx); n.textContent = u.name + (u.max > 1 ? "  ур. " + lvl + "/" + u.max : "");
-        var d = el("div", "d", tx); d.textContent = u.desc;
+        var n = el("div", "n", tx); n.textContent = this.t("up." + u.id + ".name") + (u.max > 1 ? "  " + this.t("shop.level", { l: lvl, max: u.max }) : "");
+        var d = el("div", "d", tx); d.textContent = this.t("up." + u.id + ".desc");
         var buy = el("button", "buy", row);
-        if (maxed) { buy.textContent = "Куплено"; buy.disabled = true; }
+        if (maxed) { buy.textContent = this.t("shop.owned"); buy.disabled = true; }
         else {
           buy.textContent = sym + " " + cost;
           buy.disabled = this.settings[cur] < cost;
@@ -998,7 +1222,10 @@ module.exports = (function () {
         }
       });
       var f = el("div", "foot", sh);
-      f.textContent = "Сугроб: " + Math.round(WORD_PAY * this.mult()) + " ❄ · Лужа: " + PUDDLE_PAY + " 💧 · Метель: ~" + Math.round(STORM_BASE * STORM_MULT * this.mult()) + " + бонус " + Math.round(STORM_BONUS * this.mult()) + " ❄";
+      f.textContent = this.t("shop.foot", {
+        w: Math.round(WORD_PAY * this.mult()), p: PUDDLE_PAY,
+        s: Math.round(STORM_BASE * STORM_MULT * this.mult()), b: Math.round(STORM_BONUS * this.mult())
+      });
     }
 
     /* ---------- настройки ---------- */
@@ -1006,8 +1233,17 @@ module.exports = (function () {
       var plugin = this;
       return new (class extends PST {
         display() {
+          var tab = this;
           var el = this.containerEl; el.empty();
-          el.createEl("h2", { text: "Зима" });
+          el.createEl("h2", { text: plugin.t("settings.title") });
+          new Setting(el).setName(plugin.t("settings.lang")).setDesc(plugin.t("settings.lang.desc")).addDropdown(function (dd) {
+            dd.addOption("auto", plugin.t("settings.lang.auto")).addOption("ru", "Русский").addOption("en", "English")
+              .setValue(plugin.settings.lang || "auto").onChange(async function (v) {
+                plugin.settings.lang = v; await plugin.saveData(plugin.settings);
+                plugin.applyLang();
+                plugin.later(function () { tab.display(); }, 0);
+              });
+          });
           var tog = function (name, desc, key) {
             new Setting(el).setName(name).setDesc(desc).addToggle(function (t) {
               t.setValue(plugin.settings[key]).onChange(async function (v) {
@@ -1015,31 +1251,23 @@ module.exports = (function () {
               });
             });
           };
-          tog("Снегопад", "Лёгкий снег по всему экрану", "snow");
-          tog("Иней по краям", "Замёрзшая виньетка", "frost");
-          tog("Счёт в углу", "Показывать счёт и кнопку магазина", "hud");
-          tog("Гирлянда", "Мигающая гирлянда вдоль верхнего края", "garland");
-          tog("Сугробы на словах", "Слова заметает, чистить лопатой", "drifts");
-          tog("Снег с дождём", "Сугробы и лужи под словами, лужи убирать метёлкой", "sleet");
-          tog("Метель", "Время от времени заметает весь файл", "blizzard");
-          tog("Лёд на словах", "Редкие ледяные корки, их счищает скребок", "ice");
-          tog("Ёлка в углу", "Растёт с зимним уровнем, наряжается за 💧", "tree");
-          tog("Золотая снежинка", "Иногда падает золотая снежинка: клик даёт двойной доход", "golden");
+          el.createEl("h3", { text: plugin.t("settings.toggles") });
+          ["snow", "frost", "hud", "garland", "drifts", "sleet", "blizzard", "ice", "tree", "golden"].forEach(function (k) {
+            tog(plugin.t("settings." + k), plugin.t("settings." + k + ".desc"), k);
+          });
           var gsave = async function () { await plugin.saveData(plugin.settings); };
-          new Setting(el).setName("Режим гирлянды").setDesc("Как переливаются лампочки").addDropdown(function (dd) {
-            dd.addOption("twinkle", "Мерцание").addOption("steady", "Ровный свет").addOption("blink", "Попеременное мигание")
-              .addOption("chase", "Бегущие огни").addOption("wave", "Волна").addOption("breathe", "Дыхание").addOption("sparkle", "Искры")
-              .setValue(plugin.settings.gMode).onChange(function (v) { plugin.settings.gMode = v; gsave(); });
+          new Setting(el).setName(plugin.t("settings.gmode")).setDesc(plugin.t("settings.gmode.desc")).addDropdown(function (dd) {
+            ["twinkle", "steady", "blink", "chase", "wave", "breathe", "sparkle"].forEach(function (m) { dd.addOption(m, plugin.t("mode." + m)); });
+            dd.setValue(plugin.settings.gMode).onChange(function (v) { plugin.settings.gMode = v; gsave(); });
           });
-          new Setting(el).setName("Цвета гирлянды").addDropdown(function (dd) {
-            dd.addOption("classic", "Разноцветная").addOption("rainbow", "Радужная").addOption("warm", "Тёплая белая")
-              .addOption("cold", "Холодная белая").addOption("xmas", "Красно-зелёная").addOption("candy", "Розово-белая").addOption("aurora", "Северное сияние")
-              .setValue(plugin.settings.gPalette).onChange(function (v) { plugin.settings.gPalette = v; gsave(); });
+          new Setting(el).setName(plugin.t("settings.gpalette")).addDropdown(function (dd) {
+            ["classic", "rainbow", "warm", "cold", "xmas", "candy", "aurora"].forEach(function (p) { dd.addOption(p, plugin.t("pal." + p)); });
+            dd.setValue(plugin.settings.gPalette).onChange(function (v) { plugin.settings.gPalette = v; gsave(); });
           });
-          new Setting(el).setName("Скорость гирлянды").addSlider(function (s) {
+          new Setting(el).setName(plugin.t("settings.gspeed")).addSlider(function (s) {
             s.setLimits(0.3, 3, 0.1).setValue(plugin.settings.gSpeed).setDynamicTooltip().onChange(function (v) { plugin.settings.gSpeed = v; gsave(); });
           });
-          new Setting(el).setName("Густота снега").addSlider(function (s) {
+          new Setting(el).setName(plugin.t("settings.density")).addSlider(function (s) {
             s.setLimits(0.3, 2, 0.1).setValue(plugin.settings.density).setDynamicTooltip().onChange(async function (v) {
               plugin.settings.density = v; await plugin.saveData(plugin.settings);
             });

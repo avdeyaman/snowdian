@@ -37,6 +37,7 @@ body.winter-shovel, body.winter-shovel * {
 .winter-hint {
   z-index: 9997; left: 50%; top: 22px; transform: translateX(-50%);
   padding: 8px 16px; border-radius: 999px; font-size: 14px;
+  max-width: min(90vw, 620px); text-align: center;
   background: rgba(30,50,80,.88); color: #eaf5ff;
   box-shadow: 0 4px 16px rgba(0,0,0,.3);
   transition: opacity .6s ease;
@@ -65,6 +66,8 @@ body.winter-plowing, body.winter-plowing * { cursor: none !important; }
   border: 0; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px;
   background: #6fb8ff; color: #0b2340;
 }
+.winter-shop .tx { min-width: 0; }
+.winter-shop .buy { flex: 0 0 auto; white-space: nowrap; }
 .winter-shop .buy:disabled { background: rgba(255,255,255,.18); color: rgba(255,255,255,.5); }
 .winter-shop {
   position: fixed; right: 18px; bottom: 66px; width: 360px; max-height: 70vh; overflow: auto; z-index: 9999;
@@ -151,6 +154,7 @@ body.winter-broom, body.winter-broom * {
 .winter-toast {
   z-index: 9998; left: 50%; top: 56px; transform: translateX(-50%); padding: 8px 18px; border-radius: 999px;
   background: rgba(40,80,140,.92); color: #fff; font: 600 14px var(--font-interface, system-ui);
+  max-width: min(90vw, 560px); text-align: center;
   box-shadow: 0 4px 16px rgba(0,0,0,.3); animation: winter-toast 4.2s ease forwards;
 }
 @keyframes winter-toast { 0% { opacity: 0; transform: translate(-50%,-14px); } 10%,85% { opacity: 1; transform: translate(-50%,0); } 100% { opacity: 0; } }
