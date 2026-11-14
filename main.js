@@ -1,10 +1,10 @@
 'use strict';
 /*
- * Зима — снег, иней, сугробы на словах и метель на весь файл.
+ * snowdian — снег, иней, сугробы на словах и метель на весь файл.
  *  - Слово заметает сугробом → води по нему лопатой (курсором), пока не расчистишь.
  *  - Метель заметает весь файл → курсор превращается в снегоуборочную машину, чисти.
  *  - По краям экрана — иней.
- * Команды (Ctrl/Cmd+P): «Зима: метель сейчас», «Зима: замести слово».
+ * Команды (Ctrl/Cmd+P): «snowdian: метель сейчас», «snowdian: замести слово».
  */
 
 var Base = null;
@@ -40,12 +40,12 @@ var UPGRADES = [
 
 var I18N = {
   ru: {
-    "plugin.name": "Зима",
-    "cmd.blizzard": "Зима: метель сейчас",
-    "cmd.drift": "Зима: замести слово",
-    "cmd.sleet": "Зима: снег с дождём",
-    "cmd.shop": "Зима: магазин",
-    "cmd.clear": "Зима: растопить всё",
+    "plugin.name": "snowdian",
+    "cmd.blizzard": "snowdian: метель сейчас",
+    "cmd.drift": "snowdian: замести слово",
+    "cmd.sleet": "snowdian: снег с дождём",
+    "cmd.shop": "snowdian: магазин",
+    "cmd.clear": "snowdian: растопить всё",
 
     "up.shovel.name": "Широкая лопата",
     "up.shovel.desc": "Сугробы на словах счищаются быстрее",
@@ -87,7 +87,7 @@ var I18N = {
     "blizzard.cleared": "Метель убрана!",
     "blizzard.bonus": "бонус за уборку +{b}",
 
-    "settings.title": "Зима",
+    "settings.title": "snowdian",
     "settings.lang": "Язык интерфейса",
     "settings.lang.desc": "Авто — как в Obsidian",
     "settings.lang.auto": "Авто",
@@ -134,12 +134,12 @@ var I18N = {
     "pal.aurora": "Северное сияние"
   },
   en: {
-    "plugin.name": "Winter",
-    "cmd.blizzard": "Winter: blizzard now",
-    "cmd.drift": "Winter: bury a word",
-    "cmd.sleet": "Winter: sleet",
-    "cmd.shop": "Winter: shop",
-    "cmd.clear": "Winter: clear everything",
+    "plugin.name": "snowdian",
+    "cmd.blizzard": "snowdian: blizzard now",
+    "cmd.drift": "snowdian: bury a word",
+    "cmd.sleet": "snowdian: sleet",
+    "cmd.shop": "snowdian: shop",
+    "cmd.clear": "snowdian: clear everything",
 
     "up.shovel.name": "Wide shovel",
     "up.shovel.desc": "Word drifts are cleared faster",
@@ -181,7 +181,7 @@ var I18N = {
     "blizzard.cleared": "Blizzard cleared!",
     "blizzard.bonus": "cleanup bonus +{b}",
 
-    "settings.title": "Winter",
+    "settings.title": "snowdian",
     "settings.lang": "Interface language",
     "settings.lang.desc": "Auto follows Obsidian",
     "settings.lang.auto": "Auto",
