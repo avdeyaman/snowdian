@@ -52,8 +52,6 @@ body.winter-plowing, body.winter-plowing * { cursor: none !important; }
 .winter-garland { left: 0; top: 0; width: 100vw; height: 90px; z-index: 9991; }
 
 /* ---------- счёт и магазин ---------- */
-.winter-hud, .winter-shop, .winter-hud *, .winter-shop * { cursor: default !important; }
-.winter-hud button, .winter-shop button { cursor: pointer !important; }
 .winter-hud {
   position: fixed; right: 18px; bottom: 18px; z-index: 9999;
   display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px;
@@ -162,7 +160,7 @@ body.winter-broom, body.winter-broom * {
   z-index: 9991; left: 50%; top: 30px; width: min(80vw, 900px); height: min(40vw, 450px); transform: translateX(-50%);
   border-radius: 999px 999px 0 0; border: 0;
   background: radial-gradient(circle at 50% 100%, transparent 52%, #8b5cf6 53%, #3b82f6 57%, #22c55e 61%, #facc15 65%, #fb923c 69%, #ef4444 73%, transparent 74%);
-  -webkit-mask: linear-gradient(#000 0 50%, transparent 50%); mask: linear-gradient(#000 0 50%, transparent 50%);
+  clip-path: inset(0 0 50% 0);
   opacity: 0; animation: winter-rb 7s ease forwards;
 }
 @keyframes winter-rb { 0% { opacity: 0; } 15%,75% { opacity: .5; } 100% { opacity: 0; } }
@@ -213,3 +211,9 @@ body.winter-scraper, body.winter-scraper * {
   pointer-events: none; opacity: .95;
   filter: drop-shadow(0 2px 3px rgba(0,0,0,.25));
 }
+
+/* ---------- курсор над счётчиком и магазином ----------
+   Правила идут в конце файла и с префиксом body: так они перебивают
+   лопату, метёлку и скребок по специфичности, без !important. */
+body .winter-hud, body .winter-shop, body .winter-hud *, body .winter-shop * { cursor: default; }
+body .winter-hud button, body .winter-shop button { cursor: pointer; }
