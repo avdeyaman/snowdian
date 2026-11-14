@@ -1,0 +1,211 @@
+.winter-layer { position: fixed; pointer-events: none; }
+
+/* ---------- иней по краям ---------- */
+.winter-frost { inset: 0; z-index: 9990; transition: opacity 2s ease; }
+.winter-frost-glass { display: none; }
+.winter-frost-tint {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 95% 92% at 50% 50%, rgba(220,240,255,0) 82%, rgba(225,243,255,.07) 100%);
+  box-shadow: inset 0 0 28px 0 rgba(220,242,255,.07);
+}
+.winter-frost canvas { opacity: .12; position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---------- снегопад ---------- */
+.winter-snow { inset: 0; width: 100vw; height: 100vh; z-index: 9992; }
+
+/* ---------- сугробы на словах ---------- */
+.winter-drift {
+  z-index: 9993; transform-origin: 50% 100%;
+  background: radial-gradient(ellipse at 30% 20%, #ffffff 0, #f3f8fe 50%, #d6e5f4 100%);
+  border-radius: 55% 45% 38% 42% / 75% 70% 30% 30%;
+  box-shadow: 0 2px 0 #b6cbe2, 0 5px 9px rgba(70,105,150,.35), inset 0 -3px 4px rgba(150,180,215,.45);
+}
+.winter-drift::before, .winter-drift::after {
+  content: ""; position: absolute; background: #fff; border-radius: 50%;
+  box-shadow: inset 0 -2px 3px rgba(150,180,215,.4);
+}
+.winter-drift::before { left: 12%; top: -28%; width: 32%; height: 70%; }
+.winter-drift::after  { right: 16%; top: -20%; width: 26%; height: 60%; }
+
+/* ---------- лопата ---------- */
+body.winter-shovel, body.winter-shovel * {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><g transform='rotate(-35 20 20)'><rect x='18.2' y='2' width='3.6' height='20' rx='1.8' fill='%238a5a2b' stroke='%23422a10' stroke-width='1'/><rect x='14.5' y='1' width='11' height='3.4' rx='1.7' fill='%23a56f38' stroke='%23422a10' stroke-width='1'/><path d='M12 22 H28 L26 36 Q20 40 14 36 Z' fill='%23d94a3a' stroke='%23501510' stroke-width='1.2'/><path d='M16 24 V34' stroke='%23ff9a8a' stroke-width='1.4' stroke-linecap='round'/></g></svg>") 8 34, pointer !important;
+}
+
+/* ---------- метель ---------- */
+.winter-cover { z-index: 9994; transition: opacity 1.2s ease; }
+.winter-hint {
+  z-index: 9997; left: 50%; top: 22px; transform: translateX(-50%);
+  padding: 8px 16px; border-radius: 999px; font-size: 14px;
+  background: rgba(30,50,80,.88); color: #eaf5ff;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  transition: opacity .6s ease;
+}
+.winter-plow { z-index: 9996; left: 0; top: 0; width: 170px; height: 90px; will-change: transform; }
+.winter-plow svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 5px rgba(0,0,0,.35)); }
+.winter-plow .beacon { animation: winter-beacon .7s steps(2) infinite; }
+@keyframes winter-beacon { 0% { opacity: 1; } 100% { opacity: .15; } }
+body.winter-plowing, body.winter-plowing * { cursor: none !important; }
+
+/* ---------- гирлянда ---------- */
+.winter-garland { left: 0; top: 0; width: 100vw; height: 90px; z-index: 9991; }
+
+/* ---------- счёт и магазин ---------- */
+.winter-hud, .winter-shop, .winter-hud *, .winter-shop * { cursor: default !important; }
+.winter-hud button, .winter-shop button { cursor: pointer !important; }
+.winter-hud {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9999;
+  display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 14px;
+  background: rgba(24,42,70,.88); color: #eaf5ff; border-radius: 999px;
+  font: 600 15px/1 var(--font-interface, system-ui); box-shadow: 0 4px 14px rgba(0,0,0,.3);
+}
+.winter-hud.flash { animation: winter-flash .45s ease; }
+@keyframes winter-flash { 30% { transform: scale(1.12); box-shadow: 0 0 22px rgba(160,215,255,.9); } }
+.winter-hud .shopbtn, .winter-shop .buy {
+  border: 0; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px;
+  background: #6fb8ff; color: #0b2340;
+}
+.winter-shop .buy:disabled { background: rgba(255,255,255,.18); color: rgba(255,255,255,.5); }
+.winter-shop {
+  position: fixed; right: 18px; bottom: 66px; width: 360px; max-height: 70vh; overflow: auto; z-index: 9999;
+  background: rgba(24,42,70,.96); color: #eaf5ff; border-radius: 16px; padding: 14px;
+  box-shadow: 0 10px 34px rgba(0,0,0,.45); font: 13px/1.3 var(--font-interface, system-ui);
+  animation: winter-in .25s ease;
+}
+@keyframes winter-in { from { opacity: 0; transform: translateY(10px); } }
+.winter-shop .head { display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; }
+.winter-shop .x { background: none; border: 0; color: inherit; font-size: 20px; }
+.winter-shop .bal { margin: 6px 0 10px; opacity: .8; }
+.winter-shop .row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.winter-shop .ic { font-size: 24px; width: 30px; text-align: center; }
+.winter-shop .tx { flex: 1; }
+.winter-shop .n { font-weight: 600; }
+.winter-shop .d { opacity: .65; font-size: 12px; margin-top: 2px; }
+.winter-shop .foot { margin-top: 8px; opacity: .55; font-size: 11px; }
+
+.winter-pop {
+  z-index: 9998; font: 700 18px var(--font-interface, system-ui); color: #fff;
+  text-shadow: 0 0 6px #4aa3ff, 0 2px 3px rgba(0,30,70,.7); animation: winter-pop 1.2s ease-out forwards;
+}
+.winter-pop.helper { font-size: 14px; opacity: .85; }
+@keyframes winter-pop { from { transform: translate(-50%, 0) scale(.6); opacity: 0; } 15% { transform: translate(-50%, -8px) scale(1.25); opacity: 1; } to { transform: translate(-50%, -48px) scale(1); opacity: 0; } }
+
+.winter-combo {
+  z-index: 9998; left: 50%; top: 64px; transform: translateX(-50%);
+  display: flex; gap: 12px; align-items: baseline; padding: 8px 20px; border-radius: 999px;
+  background: linear-gradient(90deg, #2a6fe0, #7a4be0); color: #fff;
+  font: 800 20px var(--font-interface, system-ui); box-shadow: 0 0 24px rgba(110,140,255,.8);
+  animation: winter-glow 1s ease-in-out infinite alternate;
+}
+.winter-combo .t { letter-spacing: .08em; font-size: 15px; }
+.winter-combo.tick .v { animation: winter-tick .18s ease; display: inline-block; }
+@keyframes winter-glow { to { box-shadow: 0 0 40px rgba(170,190,255,1); } }
+@keyframes winter-tick { 50% { transform: scale(1.3); } }
+
+.winter-bonus {
+  z-index: 9999; left: 50%; top: 40%; transform: translate(-50%, -50%); text-align: center; color: #fff;
+  text-shadow: 0 0 20px #3a8cff, 0 3px 6px rgba(0,30,80,.8); animation: winter-bonus 3.1s ease forwards;
+}
+.winter-bonus .a { font: 700 22px var(--font-interface, system-ui); }
+.winter-bonus .b { font: 900 64px var(--font-interface, system-ui); }
+.winter-bonus .c { font: 600 15px var(--font-interface, system-ui); opacity: .85; }
+@keyframes winter-bonus { 0% { transform: translate(-50%,-50%) scale(.3); opacity: 0; } 12% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } 22% { transform: translate(-50%,-50%) scale(1); } 80% { opacity: 1; } 100% { transform: translate(-50%,-90%) scale(1); opacity: 0; } }
+.winter-coin { z-index: 9999; font-size: 22px; color: #bfe3ff; text-shadow: 0 0 8px #4aa3ff; }
+
+/* ---------- дворник-помощник ---------- */
+.winter-worker { left: 0; top: 0; width: 40px; height: 44px; z-index: 9995; will-change: transform; filter: drop-shadow(0 2px 2px rgba(0,0,0,.3)); }
+.winter-worker svg { overflow: visible; }
+.winter-worker .leg { transform-box: fill-box; transform-origin: 50% 0; }
+.winter-worker.walking .l1 { animation: winter-step .4s ease-in-out infinite alternate; }
+.winter-worker.walking .l2 { animation: winter-step .4s ease-in-out infinite alternate-reverse; }
+.winter-worker.walking .wbody { animation: winter-bob .2s ease-in-out infinite alternate; }
+.winter-worker .arm { transform-box: fill-box; transform-origin: 20% 10%; transform: rotate(35deg); }
+.winter-worker.digging .arm { animation: winter-dig .75s ease-in-out infinite; }
+.winter-worker.digging .wbody { animation: winter-lean .75s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes winter-step { from { transform: rotate(-28deg); } to { transform: rotate(28deg); } }
+@keyframes winter-bob { to { transform: translateY(-1.5px); } }
+@keyframes winter-dig { 0%,100% { transform: rotate(-10deg); } 50% { transform: rotate(70deg); } }
+@keyframes winter-lean { 0%,100% { transform: rotate(0); } 50% { transform: rotate(7deg); } }
+
+/* ---------- лужи, дождь ---------- */
+.winter-puddle {
+  z-index: 9993; transform-origin: 50% 60%; overflow: visible;
+  background: radial-gradient(ellipse at 35% 35%, rgba(190,225,255,.75), rgba(90,150,215,.55) 60%, rgba(60,110,180,.5));
+  border: 1px solid rgba(255,255,255,.55); border-radius: 50%;
+  box-shadow: 0 1px 6px rgba(40,90,160,.35), inset 0 2px 3px rgba(255,255,255,.6);
+}
+.winter-puddle .ripple {
+  position: absolute; left: 50%; top: 50%; width: 30%; height: 40%; margin: -20% 0 0 -15%;
+  border: 1.5px solid rgba(255,255,255,.8); border-radius: 50%; animation: winter-ripple 2.2s ease-out infinite;
+}
+@keyframes winter-ripple { from { transform: scale(.3); opacity: .9; } to { transform: scale(2.6); opacity: 0; } }
+.winter-puddle .duck { position: absolute; left: 50%; top: -55%; font-size: 17px; transform: translateX(-50%); animation: winter-duck 2s ease-in-out infinite alternate; }
+@keyframes winter-duck { from { transform: translateX(-90%) rotate(-6deg); } to { transform: translateX(-10%) rotate(6deg); } }
+.winter-drop { z-index: 9996; width: 5px; height: 7px; border-radius: 50%; background: #7fb9ff; animation: winter-dropfly .7s ease-out forwards; }
+@keyframes winter-dropfly { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+.winter-pop.drops { color: #d8f0ff; text-shadow: 0 0 6px #2f7be0, 0 2px 3px rgba(0,30,90,.8); }
+.winter-hud .m.d { color: #9fd0ff; }
+body.winter-broom, body.winter-broom * {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><g transform='rotate(35 20 20)'><rect x='18.3' y='1' width='3.4' height='21' rx='1.7' fill='%238a5a2b' stroke='%23422a10' stroke-width='1'/><path d='M12 22 H28 L31 38 H9 Z' fill='%23d6b25a' stroke='%237a5a1a' stroke-width='1.2'/><path d='M14 26 L13 37 M20 26 V37 M26 26 L27 37' stroke='%237a5a1a' stroke-width='1'/><rect x='12' y='21' width='16' height='3.5' fill='%23c0392b'/></g></svg>") 10 34, pointer !important;
+}
+.winter-toast {
+  z-index: 9998; left: 50%; top: 56px; transform: translateX(-50%); padding: 8px 18px; border-radius: 999px;
+  background: rgba(40,80,140,.92); color: #fff; font: 600 14px var(--font-interface, system-ui);
+  box-shadow: 0 4px 16px rgba(0,0,0,.3); animation: winter-toast 4.2s ease forwards;
+}
+@keyframes winter-toast { 0% { opacity: 0; transform: translate(-50%,-14px); } 10%,85% { opacity: 1; transform: translate(-50%,0); } 100% { opacity: 0; } }
+.winter-rainbow {
+  z-index: 9991; left: 50%; top: 30px; width: min(80vw, 900px); height: min(40vw, 450px); transform: translateX(-50%);
+  border-radius: 999px 999px 0 0; border: 0;
+  background: radial-gradient(circle at 50% 100%, transparent 52%, #8b5cf6 53%, #3b82f6 57%, #22c55e 61%, #facc15 65%, #fb923c 69%, #ef4444 73%, transparent 74%);
+  -webkit-mask: linear-gradient(#000 0 50%, transparent 50%); mask: linear-gradient(#000 0 50%, transparent 50%);
+  opacity: 0; animation: winter-rb 7s ease forwards;
+}
+@keyframes winter-rb { 0% { opacity: 0; } 15%,75% { opacity: .5; } 100% { opacity: 0; } }
+.winter-worker .br { display: none; }
+.winter-worker.sweeping .sh { display: none; }
+.winter-worker.sweeping .br { display: inline; }
+.winter-worker.sweeping.digging .arm { animation: winter-sweep .5s ease-in-out infinite alternate; }
+@keyframes winter-sweep { from { transform: rotate(10deg) translateX(-3px); } to { transform: rotate(45deg) translateX(3px); } }
+
+/* ---------- лёд ---------- */
+.winter-ice {
+  z-index: 9993; transform-origin: 50% 100%;
+  background: linear-gradient(135deg, rgba(200,235,255,.85), rgba(150,205,240,.55));
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 14px;
+  box-shadow: inset 0 0 10px rgba(255,255,255,.8), 0 3px 8px rgba(60,120,180,.35);
+  backdrop-filter: blur(1px);
+}
+.winter-ice::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.7) 45%, transparent 50%);
+}
+
+/* ---------- золотая снежинка ---------- */
+.winter-golden {
+  position: fixed; top: -40px; z-index: 9997; font-size: 28px; color: #ffd166;
+  text-shadow: 0 0 10px #ffd166, 0 0 20px #ffb300; cursor: pointer;
+  animation: winter-golden-fall 9s linear forwards;
+  user-select: none;
+}
+.winter-golden:hover { transform: scale(1.25); }
+@keyframes winter-golden-fall {
+  0%   { top: -40px; transform: translateX(0) rotate(0deg); }
+  25%  { transform: translateX(40px) rotate(90deg); }
+  50%  { transform: translateX(-30px) rotate(180deg); }
+  75%  { transform: translateX(35px) rotate(270deg); }
+  100% { top: 100vh; transform: translateX(0) rotate(360deg); }
+}
+
+/* ---------- курсор скребка ---------- */
+body.winter-scraper, body.winter-scraper * {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'><rect x='16' y='4' width='5' height='22' rx='2' fill='%2388c8f0' stroke='%23236' stroke-width='1.5'/><rect x='8' y='24' width='20' height='8' rx='2' fill='%23ddd' stroke='%23236' stroke-width='1.5'/></svg>") 18 30, pointer !important;
+}
+
+/* ---------- ёлка в углу ---------- */
+.winter-tree {
+  position: fixed; right: 16px; bottom: 44px; z-index: 9990;
+  pointer-events: none; opacity: .95;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.25));
+}
